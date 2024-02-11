@@ -33,10 +33,13 @@ library(scales)
 df1 <- read_dta("~/Downloads/df1.dta")
 df2 <- read_dta("~/Downloads/df2.dta")
 df3 <- read_dta("~/Downloads/df3.dta")
-# write_csv(data, "inputs/data/reduced_data.csv") 
+write_csv(df1, "inputs/data/df1.csv") 
+write_csv(df2, "inputs/data/df2.csv")
+write_csv(df3, "inputs/data/df3.csv")
 #### Replication ####
 
 #Figure 1
+df1 <- read_csv("inputs/data/df1.csv")
 df1 <- df1 |> filter(df1$new_price < 501)
 ggplot(df1, aes(x=new_price)) +
   geom_histogram(aes(y = ..density..), binwidth = (500 - 25) / 100, fill = "gray", color = "black") +
@@ -46,6 +49,7 @@ ggplot(df1, aes(x=new_price)) +
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 #Table A1 from Appendix
+df2 <- read_csv("inputs/data/df2.csv")
 col1 <- df2 |> 
   count(city) |> 
   mutate(percentage = n / sum(n) * 100)
@@ -94,6 +98,7 @@ kable_out <- kable(combined_df, "html", align = c('l', 'r', 'r', 'r', 'r'), esca
 kable_out
 
 #Figure A3 from Appendix
+df3 <- read_csv("inputs/data/df3.csv")
 ggplot(df3[df3$review <= 50, ], aes(x = review)) +
   geom_histogram(aes(y = ..density..), binwidth = 0.5, fill = "gray", color = "black") +
   scale_x_continuous(name = "Number of reviews", breaks = seq(0, 50, by = 10)) +
