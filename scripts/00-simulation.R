@@ -38,4 +38,23 @@ simulated_airbnb$review |>
 #Making sure the ratings fall within the given range. 
 #Overall Guest Satisfaction rating should be between 0 and 100.
 # Accuracy, Cleanliness, Location, and Value ratings should be between 0 and 10.
-simulated_airbnb$guest_satisfaction_overall
+simulated_airbnb$guest_satisfaction_overall |> min() >= 0 
+simulated_airbnb$guest_satisfaction_overall |> max() <= 100 
+
+simulated_airbnb$accuracy_rating |> min() >= 0
+simulated_airbnb$accuracy_rating |> max() <= 10
+
+simulated_airbnb$cleanliness_rating |> min() >= 0
+simulated_airbnb$cleanliness_rating |> max() <= 10
+
+simulated_airbnb$location_rating |> min() >= 0
+simulated_airbnb$location_rating |> max() <= 10
+
+simulated_airbnb$value_rating |> min() >= 0
+simulated_airbnb$value_rating |> max() <= 10
+
+simulated_airbnb$city |>
+  unique() == c("toronto", "vancouver")
+
+simulated_airbnb$price |> min() >= 0
+
