@@ -33,11 +33,27 @@ In the changing landscape of modern travel, Airbnb has emerged as a transformati
 
 # Data
 
+## Source
+
+The paper titled "Can Information Reduce Ethnic Discrimination? Evidence from Airbnb" [@citepaper] published by the American Economic Association [@citewebsite] is the focus of our paper. We reproduce and investigate several areas of the original paper, using the same datasets for our analysis. 
+
+## Methadology
+
+The dataset was compiled from the publicly accessible listings on Airbnb's platform, capturing details visible on the initial listing page. [@citepaper]. The collection process was repeated every two to three weeks between June 2014 and June 2015 with an additional collection in November 2017, resulting in 21 total data collection waves. [@citepaper]. Following Laouénan and Rathelot's methodology, our analysis focuses on listings that received at least one review during the observation period, underlining the inclusion of only actively engaged listings. [@citepaper] This criterion narrowed the original dataset from 663,090 to 220,939 listings. For our specific interest in the Canadian market, we further refined the dataset to include listings solely from Toronto and Vancouver, as detailed in Table 1.
+
+We employ a methodological approach akin to Altonji and Pierret (2001), observing both the quantity and quality of information available about a property to potential guests, which could influence their decision-making process.[@cite]
+
+## Features
+
+The original research spanned 19 cities across North America and Europe, characterized by high listing volumes. Our study narrows this focus to Canadian cities, specifically Toronto and Vancouver, offering a localized perspective on the data while broadening the research question.
+
 ```{r}
 #| echo: false
 file_path <- here("outputs", "data", "airbnb_cleaned_data.csv")
 airbnb <- read_csv(file_path)
 ```
+
+Figure 1 illustrates the broad spectrum of daily rental prices, highlighting significant price variability across listings. To mitigate outlier effects, we excluded the top and bottom 1% of the price range. The price distribution reveals a first quartile at $69, a median of $94, and a third quartile at $126 per night, indicating a skewed distribution with a mean price of $108.
 
 ```{r}
 #| fig-cap: Distribution of Airbnb prices per night (including cleaning fees)
@@ -57,6 +73,28 @@ ggplot(df1, aes(x=new_price)) +
 
 summary(df1$new_price)
 ```
+
+Our analysis emphasizes the importance of review quantity and quality in correlating information availability with listing prices. Utilizing the most recent rating for each property, which aggregates all received ratings over its Airbnb tenure, we noted a skewness towards higher ratings, a finding consistent with previous research by Fradkin, Grewal, and Holtz (2018). [@cite]
+
+
+From the original dataset's 183 variables, we focused on 8 key variables deemed most relevant to our research question regarding information's impact on pricing:
+
+
+1. Review: Represents the number of reviews received by the listing.It is the feedback provided by guests after their stay or experience. 
+
+2. Guest Satisfaction: A numerical rating indicating the overall satisfaction level of guests.
+
+3. Accuracy Rating: Measured how well the description and images of a listing match the actual experience. Higher ratings suggest that guests found the property as advertised.
+
+4. Cleanliness Rating: Assesses the cleanliness of the accommodation or service provided. It reflects guests' perceptions of the hygiene standards maintained at the property.
+
+5. Location Rating: Rates the convenience, desirability, or attractiveness of the property's location, considering factors like proximity to tourist attractions, amenities, transport links, and the overall neighborhood.
+
+6. Value Rating: Evaluates guests' perceptions of the worthiness of the service or accommodation relative to the price paid. It considers whether guests feel they received good value for their money.
+
+7. New Price: Refers to the updated price of the listings after information and consequently due to the law of demand and supply.
+
+8. Log Price: Relative change in prices due to availability of information
 
 
 ```{r}
@@ -130,6 +168,9 @@ kable(long_summary_stats,
       )
 
 ```
+
+These variables were chosen for their direct relevance to our investigation into how informational transparency can affect Airbnb pricing strategies, with all variables being quantitative to facilitate our analysis.
+
 ```{r}
 #| echo: false
 set2Colors <- brewer.pal(8, "Set2")
