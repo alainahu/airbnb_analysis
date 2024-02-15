@@ -14,8 +14,8 @@ This repo provides the raw datasets, cleaned datasets, and scripts for the resea
 The repo is structured as:
 
 -   `input/data` contains the data sources used in analysis including the modified raw data. The original dataset is too large to be added to Github. Smaller subsections of the relevant data from the original data source are included.
--   `input/llm` contacts the LLM chat history
--   `input/sketches` contains the sketches for the data set and graph
+-   `input/llm` contacts the LLM chat history.
+-   `input/sketch` contains the sketches for the data set and graph.
 -   `outputs/data` contains the cleaned dataset for this analysis.
 -   `outputs/paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to replicate, simulate, download, test, and clean data.
