@@ -29,7 +29,13 @@ library(here)
 ```
 # Introduction
 
-In the changing landscape of modern travel, Airbnb has emerged as a transformative force, reshaping traditional notions of accommodation and hospitality. Central to Airbnb's allure are the wealth of user-generated reviews and ratings, which serve as vital sources of information for prospective guests navigating a vast array of listings. These reviews not only offer insights into the quality and character of accommodations but also play a pivotal role in shaping consumer decisions. However, amidst this burgeoning ecosystem of shared experiences, a fundamental question persists: What precise impact do these reviews and ratings wield on Airbnb pricing strategies? This question lies at the heart of our inquiry, as we delve into the intricate interplay between information dissemination, consumer behavior, and pricing dynamics within the Airbnb marketplace. Through rigorous statistical analysis, this paper endeavors to unravel the nuanced relationship between reviews, ratings, and Airbnb prices, shedding light on an increasingly critical facet of the sharing economy.
+In the changing landscape of modern travel, Airbnb has emerged as a transformative force, reshaping traditional notions of accommodation and hospitality. No longer are travelers confined to hotels; people have the choice to choose between various forms of accommodation and find the option most suitable for their needs. With Airbnb's vacation rentals, travelers have the option to gain access to more space, kitchens, home amenities, and lower cost (Guttentag, 2016). Central to Airbnb's allure are the wealth of user-generated reviews and ratings, which serve as vital sources of information for prospective guests navigating a vast array of listings. These reviews not only offer insights into the quality and character of accommodations but also play a pivotal role in shaping consumer decisions. However, in this growing world of shared experiences, a fundamental question persists: What effect do these reviews and ratings have on Airbnb pricing strategies? This question lies at the heart of our research, as we delve into the relationship between information, consumer behavior, and pricing dynamics within the Airbnb marketplace in Canada. Through statistical analysis and data visualization, this paper endeavors to continue to explore the relationship between reviews, ratings, and Airbnb prices.
+
+
+In an econometric analysis on Airbnb reviews and price in Boston, Lawani et al. find that reviews serve as a good proxy for rooms' quality and reviews affect both the host price and neighboring host price. Peng et al. (2020) build a machine learning model and use natural language processing to predict Airbnb prices in nine cities across the United States, Australia, and Europe. Their research concludes that customer reviews, house features, and geographical data are all predictive factors for Airbnb rental prices. While there is an extensive amount of statistical and machine learning research focused on the relationship between Airbnb reviews and prices, this paper fills in the gap in literature by focusing on the information-price relationship within Canada, specifically the cities of Toronto and Vancouver. Existing research often focuses on cities in the United States or Europe. We are interested in seeing if the same relationship between reviews and price can be found when we zoom into Toronto and Vancouver. Regional differences should be examined: Ghosh et al. (2023) find that predictability of Airbnb prices varies significantly across cities. For example, listing prices are the most predictable in Boston and least predictable in Chicago. 
+
+
+
 
 # Data
 
@@ -169,8 +175,11 @@ kable(long_summary_stats,
 
 ```
 
+<<<<<<< HEAD
 These variables were chosen for their direct relevance to our investigation into how informational transparency can affect Airbnb pricing strategies, with all variables being quantitative to facilitate our analysis.
 
+=======
+>>>>>>> b92cfdb (Started writing introductio)
 ```{r}
 #| echo: false
 set2Colors <- brewer.pal(8, "Set2")
