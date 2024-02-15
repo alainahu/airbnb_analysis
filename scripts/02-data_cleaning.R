@@ -26,3 +26,4 @@ cleaned_data <- na.omit(uncleaned_data) |>
 
 #### Save data ####
 write_csv(cleaned_data, "inputs/data/airbnb_cleaned_data.csv")
+
