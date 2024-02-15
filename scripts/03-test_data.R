@@ -57,3 +57,4 @@ airbnb$review |> class() == "numeric"
 airbnb$new_price |> class() == "numeric"
 
 airbnb$city |> class() == "character"
+

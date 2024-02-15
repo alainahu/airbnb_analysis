@@ -1,7 +1,7 @@
 ---
 title: "Information and Airbnb, An Analysis on the Impact of Reviews and Ratings on Airbnb Prices in Canada"
 author: 
-  - Alaina Hu and Ahad Qureshi
+  - Alaina Hu and Abdul Ahad Qureshi
 thanks: "Code and data are available at: https://github.com/alainahu/airbnb_analysis"
 date: today
 date-format: long
@@ -29,21 +29,32 @@ library(here)
 ```
 # Introduction
 
-In the changing landscape of modern travel, Airbnb has emerged as a transformative force, reshaping traditional notions of accommodation and hospitality. No longer are travelers confined to hotels; people have the choice to choose between various forms of accommodation and find the option most suitable for their needs. With Airbnb's vacation rentals, travelers have the option to gain access to more space, kitchens, home amenities, and lower cost (Guttentag, 2016). Central to Airbnb's allure are the wealth of user-generated reviews and ratings, which serve as vital sources of information for prospective guests navigating a vast array of listings. These reviews not only offer insights into the quality and character of accommodations but also play a pivotal role in shaping consumer decisions. However, in this growing world of shared experiences, a fundamental question persists: What effect do these reviews and ratings have on Airbnb pricing strategies? This question lies at the heart of our research, as we delve into the relationship between information, consumer behavior, and pricing dynamics within the Airbnb marketplace in Canada. Through statistical analysis and data visualization, this paper endeavors to continue to explore the relationship between reviews, ratings, and Airbnb prices.
+In the changing landscape of modern travel, Airbnb has emerged as a transformative force, reshaping traditional notions of accommodation and hospitality. No longer are travelers confined to hotels; people have the choice to choose between various forms of accommodation and find the option most suitable for their needs. With Airbnb's vacation rentals, travelers have the option to gain access to more space, kitchens, home amenities, and lower cost (Guttentag, 2016). Central to Airbnb's allure are the wealth of user-generated reviews and ratings, which serve as vital sources of information for prospective guests navigating a vast array of listings. These reviews not only offer insights into the quality and character of accommodations but also play a pivotal role in shaping consumer decisions. However, in this growing world of shared experiences, a fundamental question persists: What effect do these reviews and ratings have on Airbnb pricing strategies? This question lies at the heart of our research, as we delve into the relationship between information, consumer behavior, and pricing dynamics within the Airbnb marketplace in Canada. Our estimand for the pricing strategies of Airbnb units is the listed price for each rental unit since every Airbnb owner is able to set their own price. Through statistical analysis and data visualization, this paper endeavors to continue to explore the relationship between the explanatory variables of reviews and ratings with the response variable of Airbnb prices.
 
 
 In an econometric analysis on Airbnb reviews and price in Boston, Lawani et al. find that reviews serve as a good proxy for rooms' quality and reviews affect both the host price and neighboring host price. Peng et al. (2020) build a machine learning model and use natural language processing to predict Airbnb prices in nine cities across the United States, Australia, and Europe. Their research concludes that customer reviews, house features, and geographical data are all predictive factors for Airbnb rental prices. While there is an extensive amount of statistical and machine learning research focused on the relationship between Airbnb reviews and prices, this paper fills in the gap in literature by focusing on the information-price relationship within Canada, specifically the cities of Toronto and Vancouver. Existing research often focuses on cities in the United States or Europe. We are interested in seeing if the same relationship between reviews and price can be found when we zoom into Toronto and Vancouver. Regional differences should be examined: Ghosh et al. (2023) find that predictability of Airbnb prices varies significantly across cities. For example, listing prices are the most predictable in Boston and least predictable in Chicago. 
 
+Our paper will follow a replication of Laouénan and Rathelot's research on the effects of information on ethnic discrimination in the Airbnb market. We follow their paper to replicate the following aspects of the paper (1) the platform is effective in supplying useful information, so reviews and ratings impact the expectations of consumers and (2) there is a relationship between number of reviews and listed price. Data analysis for this reproduction is performed in `R` [@citeR], and additional help is provided by libraries such as `dplyr` [@dplyr], `ggplot2` [@ggplot], `ggrepel` [@ggrepel], `tidyverse` [@thereferencecanbewhatever], `kableExtra` [@kableextra], `knitr` [@knitr], `haven` [citehaven], 'readr' [citereadr], `stargazer`[cite], `psych`, `scales` [citescales], `RColorBrewer` [cite], `gridExtra` [cite], `here` [cite].
 
+
+Through data visualization, we observe a negative relationship between number of reviews and listing price, meaning that more reviews on an Airbnb unit are associated with a lower price. We see a moderate positive relationship between Overall Guest Satisfaction scores and prices, meaning that higher guest satisfaction scores are related to higher prices. We find no relationship between the accuracy, cleanliness, location, and value ratings with price. 
+
+
+Our research paper begins with the Data section to visualize and further understand the measurement, source, methodology, and variables we are examining. Then, we go into Results of the relationships in the data. Finally, we include the Discussion of the findings, summarizing the takeaway and future of this research.
 
 
 # Data
+
+
+## Measurement
+In order to analyze the relationship between reviews and ratings with the price, we need a method to measure these variables. Since we are replicating Laouénan and Rathelot's findings, we use their data set with our variables of interest. They collect their data through web-scraping of the Airbnb website, directly retrieving the number of reviews, rating scores, and the prices of rentals. This method leaves little room for measurement error of the variables of interest as consumers also receive the same market information. However, it is difficult to collect data for all Airbnb listings in the two cities as rentals enter and leave the market. More information on the methodology of data compliation is discussed in the Methodology section. 
+
 
 ## Source
 
 The paper titled "Can Information Reduce Ethnic Discrimination? Evidence from Airbnb" [@citepaper] published by the American Economic Association [@citewebsite] is the focus of our paper. We reproduce and investigate several areas of the original paper, using the same datasets for our analysis. 
 
-## Methadology
+## Methodology
 
 The dataset was compiled from the publicly accessible listings on Airbnb's platform, capturing details visible on the initial listing page. [@citepaper]. The collection process was repeated every two to three weeks between June 2014 and June 2015 with an additional collection in November 2017, resulting in 21 total data collection waves. [@citepaper]. Following Laouénan and Rathelot's methodology, our analysis focuses on listings that received at least one review during the observation period, underlining the inclusion of only actively engaged listings. [@citepaper] This criterion narrowed the original dataset from 663,090 to 220,939 listings. For our specific interest in the Canadian market, we further refined the dataset to include listings solely from Toronto and Vancouver, as detailed in Table 1.
 
@@ -51,7 +62,11 @@ We employ a methodological approach akin to Altonji and Pierret (2001), observin
 
 ## Features
 
-The original research spanned 19 cities across North America and Europe, characterized by high listing volumes. Our study narrows this focus to Canadian cities, specifically Toronto and Vancouver, offering a localized perspective on the data while broadening the research question.
+The original research spanned 19 cities across North America and Europe, characterized by high listing volumes. Our study narrows this focus to Canadian cities, specifically Toronto and Vancouver, offering a localized perspective on the data while broadening the research question. The observations and listings for our research are detailed in @tbl-city
+
+
+@fig-price-dist illustrates the broad spectrum of daily rental prices, highlighting significant price variability across listings. To mitigate outlier effects, we excluded the top and bottom 1% of the price range. The price distribution reveals a first quartile at $69, a median of $94, and a third quartile at $126 per night, indicating a skewed distribution with a mean price of $108.
+
 
 ```{r}
 #| echo: false
@@ -59,11 +74,23 @@ file_path <- here("outputs", "data", "airbnb_cleaned_data.csv")
 airbnb <- read_csv(file_path)
 ```
 
-Figure 1 illustrates the broad spectrum of daily rental prices, highlighting significant price variability across listings. To mitigate outlier effects, we excluded the top and bottom 1% of the price range. The price distribution reveals a first quartile at $69, a median of $94, and a third quartile at $126 per night, indicating a skewed distribution with a mean price of $108.
+```{r}
+#| tbl-cap: 'Number of Observations and Listings for Toronto and Vancouver. After filtering out observations with incomplete information regarding reviews and ratings, we are left with 87,059 observations. We continue the analysis with these observations'
+#| label: tbl-city
+#| echo: false
+
+city <- data.frame(
+  Cities = c("Toronto", "Vancouver"),
+  Observations = c("56,843", "45,569"), # Replace NA with the actual number of observations for each city
+  Listings = c("5,359", "4,219") # Replace NA with the actual number of listings for each city
+)
+
+kable(city, col.names = c("City", "Observations", "Listings"), format = "markdown", align = c('c', 'c')) 
+```
 
 ```{r}
-#| fig-cap: Distribution of Airbnb prices per night (including cleaning fees)
-#| label: price_dist
+#| fig-cap: 'Distribution of Airbnb prices per night (including cleaning fees)'
+#| label: fig-price-dist
 #| echo: false
 
 df1 <- airbnb
@@ -77,7 +104,6 @@ ggplot(df1, aes(x=new_price)) +
         panel.grid.minor = element_blank(),
         plot.title = element_text(hjust=0.5))
 
-summary(df1$new_price)
 ```
 
 Our analysis emphasizes the importance of review quantity and quality in correlating information availability with listing prices. Utilizing the most recent rating for each property, which aggregates all received ratings over its Airbnb tenure, we noted a skewness towards higher ratings, a finding consistent with previous research by Fradkin, Grewal, and Holtz (2018). [@cite]
@@ -98,27 +124,20 @@ From the original dataset's 183 variables, we focused on 8 key variables deemed 
 
 6. Value Rating: Evaluates guests' perceptions of the worthiness of the service or accommodation relative to the price paid. It considers whether guests feel they received good value for their money.
 
-7. New Price: Refers to the updated price of the listings after information and consequently due to the law of demand and supply.
+7. New Price: Refers to the price in U.S dollars including cleaning fees and consequently due to the law of demand and supply.
 
 8. Log Price: Relative change in prices due to availability of information
 
 
-```{r}
-summary_df <- airbnb |>
-  summarise(
-    Mean_New_Price = mean(new_price, na.rm = TRUE),
-    Median_New_Price = median(new_price, na.rm = TRUE),
-    SD_New_Price = sd(new_price, na.rm = TRUE))
-```
 
 
 
-```{r}
-```
+
+
 
 ```{r}
 #| tbl-cap: Summary Statistics for the Reviews and Ratings 
-#| label: summ_stats
+#| label: tbl-summ-stats
 #| echo: false
 
 summary <- airbnb |>
@@ -171,15 +190,14 @@ kable(long_summary_stats,
       col.names = c("Variable", "Mean", "Median", "Standard Deviation", "Min", "Max"),
       row.names = FALSE, # We already have the Variable column, so we don't want to print row names
       align = c('l', 'r', 'r', 'r', 'r', 'r'), # Align the columns left for variable name and right for numbers 
-      )
+      ) 
 
 ```
 
-<<<<<<< HEAD
+
 These variables were chosen for their direct relevance to our investigation into how informational transparency can affect Airbnb pricing strategies, with all variables being quantitative to facilitate our analysis.
 
-=======
->>>>>>> b92cfdb (Started writing introductio)
+# Results
 ```{r}
 #| echo: false
 set2Colors <- brewer.pal(8, "Set2")
@@ -421,3 +439,23 @@ vancouver_value <- ggplot(vancouver_data, aes(x=factor(value_rating), y=new_pric
 #| echo: false
 grid.arrange(toronto_value, vancouver_value, ncol = 2)
 ```
+
+#Discussion
+Our analysis aimed to understand the dynamics between Airbnb reviews, ratings, and listing prices in the Canadian cities of Toronto and Vancouver. Our results show some links between how customer feedback affects prices on the platform. Here, we discuss our findings, summarize the research, and consider future steps. 
+
+## Key Findings
+A key finding from our research is the negative relationship between the number of reviews a listing has and its price. This suggests that listings with a higher volume of reviews tend to be priced lower. One plausible explanation for this phenomenon could be that hosts with more reviews have successfully attracted more guests over time, possibly by offering more competitive pricing. Alternatively, it could indicate that guests are more inclined to choose and review more affordably priced accommodations, thereby increasing the review count of such listings. This finding challenges the intuitive expectation that a higher number of reviews, as an indicator for popularity or demand, would correlate with higher prices. Instead, it underscores the importance of pricing strategy in garnering guest expectation, interest, and feedback.
+
+Our analysis also uncovers a slightly positive relationship between guest overall satisfaction scores and listing prices. This indicates that listings which manage to achieve higher satisfaction scores can command slightly higher prices, likely reflecting the premium that guests are willing to pay for a perceived higher quality or experience. This relationship aligns with expectations that positive guest experiences, as encapsulated by overall satisfaction scores, would be valued higher in the marketplace.
+
+Our study finds no significant relationship between price and specific ratings such as accuracy, location, cleanliness, and value. This absence of correlation suggests that while these factors are crucial for guest satisfaction and decision-making, they do not directly influence the pricing of listings. It may be that these specific aspects of guest experience are considered baseline expectations, with deviations influencing guest choice but not necessarily allowing hosts to adjust prices upwards for excelling in these areas. Initially in @tbl-summ-stats, there is a left-skew of rating scores. As many listings generally score high in these ratings, the scores may not be a strong indicator of pricing strategy. 
+
+## Weaknesses
+A limitation of our study is the reliance solely on data visualization techniques. We relied on plotting the relationships between our independent variables (e.g., number of reviews, guest satisfaction scores) and the dependent variable (price), without the application of linear regression or the construction of predictive models. While these visualizations have offered valuable initial insights into potential trends within the data, they fall short of providing a detailed quantitative analysis that could confirm the strength, direction, and significance of these relationships.
+
+The absence of model-based analysis prevents us from adjusting for potential confounds or exploring the interactive effects between different variables. As such, the relationships we report may be subject to underlying biases or influenced by variables not included in our visual explorations.
+
+## Further Steps
+Our research paper replicates Laouénan and Rathelot's findings that show (1) the platform is effective in supplying useful information, so reviews and ratings impact the expectations of consumers and (2) there is a relationship between number of reviews and listed price. However, we leave out the focus on ethnic discrimination in this paper. A further step to take could be to perform an analysis on the impact of information on ethnic discrimination in the Airbnb market in Canada and fully replicate the original paper's findings. Researching the relationship between increased information on ethnic discrimination and lowering the gap in prices between majority and minority Airbnb hosts would be important because of Canada's growing minority population. Since 2017, over 50% of people in Toronto identified as a visible minority, making the city majority visible minority (@cite). 
+
+Not only can we expand the scope of our research, we can also deepen the complexity of our statistical analysis. To better understand the relationship between reviews and ratings on prices, we can conduct linear and multiple regression analyses or build models to incorporate a wider array of variables, such as location-specific factors and host characteristics. Further, integrating qualitative data, such as text analysis of review content, could provide a more nuanced understanding of how the qualitative aspects of guest feedback influence pricing decisions. By adopting these approaches, future research can bring us closer to better replicating the original findings and offer more definitive conclusions and recommendations for Airbnb hosts looking to optimize their pricing strategies in a competitive market in Canada. 
