@@ -25,6 +25,7 @@ library(ggplot2)
 library(ggrepel)
 library(RColorBrewer)
 library(gridExtra)
+library(here)
 ```
 # Introduction
 
@@ -34,8 +35,8 @@ In the changing landscape of modern travel, Airbnb has emerged as a transformati
 
 ```{r}
 #| echo: false
-#|
-airbnb <- read_csv("/airbnb/inputs/data/airbnb_cleaned_data.csv")
+file_path <- here("outputs", "data", "airbnb_cleaned_data.csv")
+airbnb <- read_csv(file_path)
 ```
 
 ```{r}
