@@ -1,0 +1,372 @@
+---
+title: "Information and Airbnb, An Analysis on the Impact of Reviews and Ratings on Airbnb Prices in Canada"
+author: 
+  - Alaina Hu and Ahad Qureshi
+thanks: "Code and data are available at: https://github.com/alainahu/airbnb_analysis"
+date: today
+date-format: long
+abstract: ''
+format: pdf
+toc: true
+number-sections: true
+#bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+library(RColorBrewer)
+library(gridExtra)
+```
+# Introduction
+
+In the changing landscape of modern travel, Airbnb has emerged as a transformative force, reshaping traditional notions of accommodation and hospitality. Central to Airbnb's allure are the wealth of user-generated reviews and ratings, which serve as vital sources of information for prospective guests navigating a vast array of listings. These reviews not only offer insights into the quality and character of accommodations but also play a pivotal role in shaping consumer decisions. However, amidst this burgeoning ecosystem of shared experiences, a fundamental question persists: What precise impact do these reviews and ratings wield on Airbnb pricing strategies? This question lies at the heart of our inquiry, as we delve into the intricate interplay between information dissemination, consumer behavior, and pricing dynamics within the Airbnb marketplace. Through rigorous statistical analysis, this paper endeavors to unravel the nuanced relationship between reviews, ratings, and Airbnb prices, shedding light on an increasingly critical facet of the sharing economy.
+
+# Data
+
+```{r}
+#| echo: false
+#|
+airbnb <- read_csv("/airbnb/inputs/data/airbnb_cleaned_data.csv")
+```
+
+```{r}
+#| fig-cap: Distribution of Airbnb prices per night (including cleaning fees)
+#| label: price_dist
+#| echo: false
+
+df1 <- airbnb
+ggplot(df1, aes(x=new_price)) +
+  geom_histogram(aes(y=..density..), binwidth=10, colour="black", fill="grey") + # binwidth adjusted for demonstration
+  scale_x_continuous(limits=c(0, 500), breaks=seq(0, 500, by=50), name="Price") +
+  scale_y_continuous(name="Density") +
+  theme_minimal() +
+  theme(plot.background = element_rect(fill="white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(hjust=0.5))
+
+summary(df1$new_price)
+```
+
+
+```{r}
+summary_df <- airbnb |>
+  summarise(
+    Mean_New_Price = mean(new_price, na.rm = TRUE),
+    Median_New_Price = median(new_price, na.rm = TRUE),
+    SD_New_Price = sd(new_price, na.rm = TRUE))
+```
+
+
+
+```{r}
+```
+
+```{r}
+#| tbl-cap: Summary Statistics for the Reviews and Ratings 
+#| label: summ_stats
+#| echo: false
+
+summary <- airbnb |>
+  summarise(
+    Mean_Review = mean(review, na.rm = TRUE),
+    Median_Review = median(review, na.rm = TRUE),
+    SD_Review = sd(review, na.rm = TRUE),
+    Min_Review = min(review, na.rm = TRUE),
+    Max_Review = max(review, na.rm = TRUE),
+    Mean_Guest = mean(guest_satisfaction_overall, na.rm = TRUE),
+    Median_Guest = median(guest_satisfaction_overall, na.rm = TRUE),
+    SD_Guest = sd(guest_satisfaction_overall, na.rm = TRUE),
+    Min_Guest = min(guest_satisfaction_overall, na.rm = TRUE),
+    Max_Guest = max(guest_satisfaction_overall, na.rm = TRUE),
+    Mean_Accuracy = mean(accuracy_rating, na.rm = TRUE),
+    Median_Accuracy = median(accuracy_rating, na.rm = TRUE),
+    SD_Accuracy = sd(accuracy_rating, na.rm = TRUE),
+    Min_Accuracy = min(accuracy_rating, na.rm = TRUE),
+    Max_Accuracy = max(accuracy_rating, na.rm = TRUE),
+    Mean_Clean = mean(cleanliness_rating, na.rm = TRUE),
+    Median_Clean = median(cleanliness_rating, na.rm = TRUE),
+    SD_Clean = sd(cleanliness_rating, na.rm = TRUE),
+    Min_Clean = min(cleanliness_rating, na.rm = TRUE),
+    Max_Clean = max(cleanliness_rating, na.rm = TRUE),
+    Mean_Location = mean(location_rating, na.rm = TRUE),
+    Median_Location = median(location_rating, na.rm = TRUE),
+    SD_Location = sd(location_rating, na.rm = TRUE),
+    Min_Location = min(location_rating, na.rm = TRUE),
+    Max_Location = max(location_rating, na.rm = TRUE),
+    Mean_Value = mean(value_rating, na.rm = TRUE),
+    Median_Value = median(value_rating, na.rm = TRUE),
+    SD_Value = sd(value_rating, na.rm = TRUE),
+    Min_Value = min(value_rating, na.rm = TRUE),
+    Max_Value = max(value_rating, na.rm = TRUE)
+  )
+long_summary_stats <- summary |>
+  pivot_longer(cols = everything(), names_to = "Statistic", values_to = "Value") |>
+  separate(Statistic, into = c("Measure", "Variable"), sep = "_") |>
+  spread(key = Measure, value = Value) |>
+  select(Variable, Mean, Median, SD, Min, Max)
+
+
+long_summary_stats$Variable <- c("Accuracy Rating", "Cleanliness Rating", "Guest Overall Satisfaction", 
+                                 "Location Rating", "Number of Reviews", "Value Rating")
+
+# Now use kable to create the markdown table
+kable(long_summary_stats, 
+      format = "markdown", 
+      digits = 2,
+      col.names = c("Variable", "Mean", "Median", "Standard Deviation", "Min", "Max"),
+      row.names = FALSE, # We already have the Variable column, so we don't want to print row names
+      align = c('l', 'r', 'r', 'r', 'r', 'r'), # Align the columns left for variable name and right for numbers 
+      )
+
+```
+```{r}
+#| echo: false
+set2Colors <- brewer.pal(8, "Set2")
+toronto <- set2Colors[2] 
+vancouver <- set2Colors[1]
+```
+
+
+
+```{r}
+#| tbl-cap: Plot of Listing Reviews and Price
+#| label: review_price
+#| echo: false
+#| 
+ggplot(airbnb, aes(x = review, y = log_price, color = city)) +
+         geom_point(size = 0.75) +
+         geom_smooth(aes(color = city), method = "lm", se = FALSE, size = 1.5) +        geom_smooth(method = "lm", color = "black", se = TRUE, size = 1) +  
+         labs(
+       x = "Number of Reviews", 
+       y = "Price") +
+  theme_minimal() +
+  theme(plot.background = element_rect(color = "black", fill = "white"))
+  scale_color_brewer(palette = "Set2")
+```
+
+
+
+
+
+
+
+
+```{r}
+#| tbl-cap: Plot of Guest Overall Satisfaction Score and Price
+#| label: guest_satisf
+#| echo: false
+#| 
+ggplot(airbnb, aes(x = guest_satisfaction_overall, y = new_price, color = city)) +
+         geom_point(size = 0.75) +
+         geom_smooth(aes(color = city), method = "lm", se = FALSE, size = 1.5) +        geom_smooth(method = "lm", color = "black", se = TRUE, size = 1) +  
+         labs(
+       x = "Guest Overall Satisfaction Score", 
+       y = "Price") +
+  theme_minimal() +
+  theme(plot.background = element_rect(color = "black", fill = "white")) 
+  scale_color_manual(values = c("toronto" = toronto, "vancouver" = vancouver))
+```
+
+```{r}
+unique_values <- unique(airbnb$accuracy_rating)
+
+# Print the unique values
+print(unique_values)
+```
+
+
+
+```{r}
+#| tbl-cap: Plot of Accuracy Rating and Price
+#| label: accuracy_price
+#| echo: false
+
+ggplot(airbnb, aes(x=factor(accuracy_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill="grey") +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Accuracy Rating", y = "Price") +
+  theme_minimal()
+
+```
+
+```{r}
+#| echo: false
+toronto_data <- airbnb |>
+  filter(city == "toronto")
+
+toronto_accuracy <- ggplot(toronto_data, aes(x=factor(accuracy_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=toronto) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Accuracy Rating", y = "Price") +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+vancouver_data <- airbnb |>
+  filter(city == "vancouver")
+
+vancouver_accuracy <- ggplot(vancouver_data, aes(x=factor(accuracy_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=vancouver) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Accuracy Rating", y = "Price") +
+  theme_minimal()
+```
+
+```{r}
+#| tbl-cap: Plot of Accuracy Rating and Price in Toronto (left) and Vancouver (right)
+#| label: accuracy_price_2
+#| echo: false
+grid.arrange(toronto_accuracy, vancouver_accuracy, ncol = 2)
+```
+
+
+
+```{r}
+#| tbl-cap: Plot of Cleanliness Rating and Price
+#| label: clean_price
+#| echo: false
+
+ggplot(airbnb, aes(x=factor(cleanliness_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill="grey") +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Cleanliness Rating", y = "Price") +
+  theme_minimal()
+
+```
+
+```{r}
+#| echo: false
+
+toronto_cleanliness <- ggplot(toronto_data, aes(x=factor(cleanliness_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=toronto) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Cleanliness Rating", y = "Price") +
+  theme_minimal()
+```
+
+
+```{r}
+#| echo: false
+
+vancouver_cleanliness <- ggplot(vancouver_data, aes(x=factor(cleanliness_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=vancouver) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Cleanliness Rating", y = "Price") +
+  theme_minimal()
+```
+
+
+```{r}
+#| tbl-cap: Plot of Cleanliness Rating and Price in Toronto (left) and Vancouver (right)
+#| label: clean_price_2
+#| echo: false
+grid.arrange(toronto_cleanliness, vancouver_cleanliness, ncol = 2)
+```
+
+
+```{r}
+#| tbl-cap: Plot of Location Rating and Price
+#| label: location_price
+#| echo: false
+
+ggplot(airbnb, aes(x=factor(location_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill="grey") +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Location Rating", y = "Price") +
+  theme_minimal()
+
+```
+
+```{r}
+#| echo: false
+
+toronto_location <- ggplot(toronto_data, aes(x=factor(location_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=toronto) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Location Rating", y = "Price") +
+  theme_minimal()
+```
+
+
+```{r}
+#| echo: false
+
+vancouver_location <- ggplot(vancouver_data, aes(x=factor(location_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=vancouver) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Location Rating", y = "Price") +
+  theme_minimal()
+```
+
+```{r}
+#| tbl-cap: Plot of Location Rating and Price in Toronto (left) and Vancouver (right)
+#| label: location_price_2
+#| echo: false
+grid.arrange(toronto_location, vancouver_location, ncol = 2)
+```
+
+
+```{r}
+#| tbl-cap: Plot of Value Rating and Price
+#| label: value_price
+#| echo: false
+
+ggplot(airbnb, aes(x=factor(value_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill="grey") +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Value Rating", y = "Price") +
+  theme_minimal()
+
+```
+
+
+```{r}
+#| echo: false
+
+toronto_value <- ggplot(toronto_data, aes(x=factor(value_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=toronto) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Value Rating", y = "Price") +
+  theme_minimal()
+```
+
+
+```{r}
+#| echo: false
+
+vancouver_value <- ggplot(vancouver_data, aes(x=factor(value_rating), y=new_price)) +
+  geom_violin(trim=FALSE, fill=vancouver) +
+  stat_summary(fun=mean, geom="point", shape=23, size=2, fill="white") +
+  scale_x_discrete(limits = as.character(0:10)) + 
+  labs(x = "Value Rating", y = "Price") +
+  theme_minimal()
+```
+
+```{r}
+#| tbl-cap: Plot of Value Rating and Price in Toronto (left) and Vancouver (right)
+#| label: value_price_2
+#| echo: false
+grid.arrange(toronto_value, vancouver_value, ncol = 2)
+```
