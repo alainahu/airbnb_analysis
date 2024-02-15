@@ -20,7 +20,10 @@ cleaned_data <- na.omit(uncleaned_data) |>
          cleanliness_rating,
          location_rating,
          value_rating,
-         new_price, log_price)
+         city,
+         new_price, log_price) |>
+  filter(is.finite(new_price), !is.na(new_price))
 
 #### Save data ####
 write_csv(cleaned_data, "inputs/data/airbnb_cleaned_data.csv")
+

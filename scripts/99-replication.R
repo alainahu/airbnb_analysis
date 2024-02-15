@@ -9,17 +9,7 @@
 
 
 #### Workspace setup ####
-install.packages("ggplot2")
-install.packages("haven")
-install.packages("dplyr")
-install.packages("readr")
-install.packages("broom")
-install.packages("stargazer")
-install.packages("biglm")
-install.packages("psych")
-install.packages("knitr")
-install.packages("kableExtra")
-install.packages("scales")
+library(tidyverse)
 library(haven)
 library(dplyr)
 library(ggplot2)
@@ -36,6 +26,7 @@ df3 <- read_dta("~/Downloads/df3.dta")
 write_csv(df1, "inputs/data/df1.csv") 
 write_csv(df2, "inputs/data/df2.csv")
 write_csv(df3, "inputs/data/df3.csv")
+
 #### Replication ####
 
 #Figure 1
